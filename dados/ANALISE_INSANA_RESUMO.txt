@@ -1,0 +1,16 @@
+====================================================================================================
+RELATÓRIO: ANÁLISE REALMENTE FORA DA CAIXA
+Data: 2026-02-08 09:52:03
+====================================================================================================
+
+🔥 Análises insanas realizadas:
+1. Valores redondos vs quebrados - Existe viés?
+2. Horários impossíveis - Quem fecha às 3h da manhã?
+3. Urgência de fim de mês - Dias 25-31 explodem?
+4. Dia do mês exato - Qual dia (1-31) vende mais?
+5. Minuto exato - :00, :15, :30, :45 vendem mais?
+6. Primeiro dia útil - Efeito folha de pagamento?
+7. CPFs suspeitos - Dígitos repetidos = fraude?
+8. Domínio de email - @gmail é mais pobre?
+
+✅ Patterns insanos descobertos e testados estatisticamente!

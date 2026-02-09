@@ -53,18 +53,18 @@ export default function App() {
 
     // --- DADOS DE MONTE CARLO 2026 ---
     const monthlyMonteCarlo = useMemo(() => [
-        { mes: 'Jan', valor: 19.6, ci: '7.2 - 32.3', obs: 'Recuperação' },
-        { mes: 'Fev', valor: 19.3, ci: '8.1 - 30.8', obs: 'Normalidade' },
-        { mes: 'Mar', valor: 24.0, ci: '16.7 - 31.3', obs: 'Crescimento' },
-        { mes: 'Abr', valor: 39.3, ci: '32.4 - 46.4', obs: 'Mês Forte' },
-        { mes: 'Mai', valor: 48.6, ci: '24.5 - 72.3', obs: 'Muito Forte' },
-        { mes: 'Jun', valor: 25.2, ci: '24.7 - 25.8', obs: 'Estável' },
-        { mes: 'Jul', valor: 41.9, ci: '10.1 - 76.4', obs: 'Volatilidade' },
-        { mes: 'Ago', valor: 53.8, ci: '20.1 - 88.7', obs: 'Mês Quente' },
-        { mes: 'Set', valor: 49.7, ci: '11.2 - 93.0', obs: 'Gatilho Staff' },
-        { mes: 'Out', valor: 48.7, ci: '31.0 - 66.3', obs: 'Mês Volume' },
-        { mes: 'Nov', valor: 78.6, ci: '18.1 - 102.8', obs: 'Mega-Deals' },
-        { mes: 'Dez', valor: 109.4, ci: '21.7 - 210.4', obs: 'SUPREMO' },
+        { mes: 'Jan', valor: 19.6, realizado: 11.3, ci: '7.2 - 32.3', obs: 'Abaixo da Média', status: 'warning' },
+        { mes: 'Fev', valor: 19.3, realizado: null, ci: '8.1 - 30.8', obs: 'Normalidade', status: 'neutral' },
+        { mes: 'Mar', valor: 24.0, realizado: null, ci: '16.7 - 31.3', obs: 'Crescimento', status: 'neutral' },
+        { mes: 'Abr', valor: 39.3, realizado: null, ci: '32.4 - 46.4', obs: 'Mês Forte', status: 'neutral' },
+        { mes: 'Mai', valor: 48.6, realizado: null, ci: '24.5 - 72.3', obs: 'Muito Forte', status: 'neutral' },
+        { mes: 'Jun', valor: 25.2, realizado: null, ci: '24.7 - 25.8', obs: 'Estável', status: 'neutral' },
+        { mes: 'Jul', valor: 41.9, realizado: null, ci: '10.1 - 76.4', obs: 'Volatilidade', status: 'neutral' },
+        { mes: 'Ago', valor: 53.8, realizado: null, ci: '20.1 - 88.7', obs: 'Mês Quente', status: 'neutral' },
+        { mes: 'Set', valor: 49.7, realizado: null, ci: '11.2 - 93.0', obs: 'Gatilho Staff', status: 'neutral' },
+        { mes: 'Out', valor: 48.7, realizado: null, ci: '31.0 - 66.3', obs: 'Mês Volume', status: 'neutral' },
+        { mes: 'Nov', valor: 78.6, realizado: null, ci: '18.1 - 102.8', obs: 'Mega-Deals', status: 'neutral' },
+        { mes: 'Dez', valor: 109.4, realizado: null, ci: '21.7 - 210.4', obs: 'SUPREMO', status: 'neutral' },
     ], []);
 
     const contributionData = [
@@ -83,6 +83,7 @@ export default function App() {
         { id: 'geo_alpha', label: 'Alpha Regional', icon: MapPin },
         { id: 'staff_ramp', label: 'Efeito Staff', icon: Users },
         { id: 'black_swans', label: 'Mega-Contratos', icon: Trophy },
+        { id: 'deep_dive', label: 'Raio-X Avançado', icon: Search },
     ];
 
     const StrategicWhy = ({ title, logic, trigger, result }) => (
@@ -182,12 +183,13 @@ export default function App() {
                         {activeTab === 'annual_summary' && (
                             <div className="animate-in fade-in slide-in-from-right-4 duration-500 space-y-6">
                                 <div className="bg-neutral-900/20 border border-white/5 rounded-[2.5rem] p-6 md:p-10 backdrop-blur-sm overflow-x-auto shadow-2xl">
-                                    <h2 className="text-2xl font-black text-white italic uppercase tracking-tighter mb-8 leading-none">Projeção Mensal Monte Carlo</h2>
+                                    <h2 className="text-2xl font-black text-white italic uppercase tracking-tighter mb-8 leading-none">Projeção Mensal Monte Carlo (+Realizado)</h2>
                                     <table className="w-full text-left">
                                         <thead>
                                             <tr className="border-b border-white/10">
                                                 <th className="pb-4 text-[10px] font-black text-neutral-500 uppercase tracking-widest">Mês</th>
                                                 <th className="pb-4 text-[10px] font-black text-neutral-500 uppercase tracking-widest">Previsão (R$)</th>
+                                                <th className="pb-4 text-[10px] font-black text-neutral-500 uppercase tracking-widest">Realizado</th>
                                                 <th className="pb-4 text-[10px] font-black text-neutral-500 uppercase tracking-widest">Intervalo Conf. (80%)</th>
                                                 <th className="pb-4 text-[10px] font-black text-neutral-500 uppercase tracking-widest text-right">Contexto</th>
                                             </tr>
@@ -197,9 +199,21 @@ export default function App() {
                                                 <tr key={m.mes} className="group hover:bg-white/[0.02] transition-colors">
                                                     <td className="py-3 font-black text-white italic text-sm">{m.mes}</td>
                                                     <td className="py-3 font-black text-emerald-500 text-sm">R$ {m.valor}M</td>
+                                                    <td className="py-3 font-black text-sm">
+                                                        {m.realizado ? (
+                                                            <div className="flex items-center gap-2">
+                                                                <span className={m.valor > m.realizado ? "text-yellow-500" : "text-emerald-400"}>
+                                                                    R$ {m.realizado}M
+                                                                </span>
+                                                                {m.valor > m.realizado && <ArrowDownRight size={14} className="text-yellow-500" />}
+                                                            </div>
+                                                        ) : <span className="text-neutral-600">-</span>}
+                                                    </td>
                                                     <td className="py-3 font-mono text-neutral-500 text-[10px]">{m.ci} M</td>
                                                     <td className="py-3 text-right">
-                                                        <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded ${m.obs === 'SUPREMO' ? 'bg-emerald-500 text-black' : 'bg-white/5 text-neutral-500'}`}>
+                                                        <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded ${m.status === 'warning' ? 'bg-yellow-500/20 text-yellow-500' :
+                                                                m.obs === 'SUPREMO' ? 'bg-emerald-500 text-black' : 'bg-white/5 text-neutral-500'
+                                                            }`}>
                                                             {m.obs}
                                                         </span>
                                                     </td>
@@ -209,10 +223,10 @@ export default function App() {
                                     </table>
 
                                     <StrategicWhy
-                                        title="Caminho do Faturamento"
-                                        logic="O Bilhão é atingido pelo ramp-up exponencial no Q4, onde o ticket médio individual sobe para R$ 6.56M."
-                                        trigger="Suportar o volume de Dezembro (R$ 109M) com a maturidade da equipa contratada em Setembro."
-                                        result="Faturamento consolidado atingindo R$ 1.58B com 92% de probabilidade."
+                                        title="Realidade vs Modelo (Jan/26)"
+                                        logic="O realizado de Janeiro (R$ 11.3M) ficou abaixo da média projetada (R$ 19.6M), mas DENTRO do intervalo de confiança (R$ 7.2M - 32.3M)."
+                                        trigger="Janeiro operou no cenário PESSIMISTA do Monte Carlo."
+                                        result="Sem pânico: O modelo previu essa volatilidade. Aceleração crítica necessária em Fevereiro para retomar a média."
                                     />
                                 </div>
                             </div>
@@ -336,6 +350,97 @@ export default function App() {
                                         trigger="Utilizar a nova força de vendas para prospecção cirúrgica de grandes players em MT/GO."
                                         result="Captura de +2 mega-deals extras, elevando o faturamento global para os R$ 1.58 Bilhão almejados."
                                     />
+                                </div>
+                            </div>
+                        )}
+                        {/* 5. DEEP DIVE (NOVO) */}
+                        {activeTab === 'deep_dive' && (
+                            <div className="animate-in fade-in slide-in-from-right-4 duration-500 space-y-6">
+                                <div className="bg-neutral-900/20 border border-white/5 rounded-[2.5rem] p-8 md:p-10 backdrop-blur-sm">
+                                    <h2 className="text-3xl font-black text-white italic uppercase tracking-tighter mb-10 leading-none">Verdades Ocultas nos Dados</h2>
+
+                                    {/* Cronobiologia */}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                                        <div className="bg-neutral-950/50 p-8 rounded-[2rem] border border-white/5 relative overflow-hidden group">
+                                            <Clock className="absolute top-4 right-4 text-white/5" size={80} />
+                                            <h3 className="text-sm font-black text-emerald-500 uppercase tracking-widest mb-4">Cronobiologia de Vendas</h3>
+                                            <div className="space-y-6">
+                                                <div>
+                                                    <div className="flex justify-between text-xs font-black uppercase mb-1">
+                                                        <span className="text-white">Segunda-Feira</span>
+                                                        <span className="text-emerald-500">Volume Máximo</span>
+                                                    </div>
+                                                    <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+                                                        <div className="h-full bg-emerald-500 w-[85%]" />
+                                                    </div>
+                                                    <p className="text-[10px] text-neutral-500 mt-1 italic">22.2% dos deals (Líder em Qtd)</p>
+                                                </div>
+                                                <div>
+                                                    <div className="flex justify-between text-xs font-black uppercase mb-1">
+                                                        <span className="text-white">Sexta-Feira</span>
+                                                        <span className="text-blue-500">Eficiência Máxima</span>
+                                                    </div>
+                                                    <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+                                                        <div className="h-full bg-blue-500 w-[95%]" />
+                                                    </div>
+                                                    <p className="text-[10px] text-neutral-500 mt-1 italic">Ticket Médio +31.8% superior</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="bg-neutral-950/50 p-8 rounded-[2rem] border border-white/5 relative overflow-hidden group">
+                                            <Users className="absolute top-4 right-4 text-white/5" size={80} />
+                                            <h3 className="text-sm font-black text-pink-500 uppercase tracking-widest mb-4">Força Dominante</h3>
+                                            <div className="flex items-end gap-2 mb-2">
+                                                <span className="text-5xl font-black text-white italic tracking-tighter">60.5%</span>
+                                                <span className="text-xs font-bold text-neutral-500 mb-2 uppercase">da Equipe (Mulheres)</span>
+                                            </div>
+                                            <p className="text-sm text-neutral-300 font-bold leading-tight">
+                                                Geram <span className="text-pink-500">64.1%</span> do valor total e <span className="text-pink-500">+16%</span> de ticket médio.
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {/* Arquétipos */}
+                                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                                        <div className="lg:col-span-2 bg-gradient-to-br from-neutral-900 to-neutral-950 p-8 rounded-[2rem] border border-white/5">
+                                            <h3 className="text-sm font-black text-white uppercase tracking-widest mb-6">Arquétipos de Elite</h3>
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                                                <div className="space-y-2">
+                                                    <span className="text-[9px] bg-emerald-500/20 text-emerald-400 px-2 py-1 rounded uppercase font-black tracking-widest">Sniper</span>
+                                                    <p className="text-xl font-black text-white uppercase italic">Camila Valadares</p>
+                                                    <p className="text-xs text-neutral-400 font-bold leading-relaxed">
+                                                        Menos deals, precisão cirúrgica. Ticket médio de <span className="text-white">R$ 10.7M</span> (8x a média).
+                                                    </p>
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <span className="text-[9px] bg-blue-500/20 text-blue-400 px-2 py-1 rounded uppercase font-black tracking-widest">Metralhadora</span>
+                                                    <p className="text-xl font-black text-white uppercase italic">Lucimara</p>
+                                                    <p className="text-xs text-neutral-400 font-bold leading-relaxed">
+                                                        Volume massivo e consistência. <span className="text-white">73 deals</span> (Líder absoluta em quantidade).
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="bg-neutral-900 p-6 rounded-[2rem] border border-white/5 flex flex-col justify-center text-center">
+                                            <p className="text-[10px] font-black text-red-500 uppercase tracking-widest mb-2">Alerta Crítico</p>
+                                            <p className="text-5xl font-black text-white italic tracking-tighter mb-2">3.4%</p>
+                                            <p className="text-xs font-black text-neutral-500 uppercase tracking-widest">Win Rate Atual</p>
+                                            <div className="mt-4 pt-4 border-t border-white/5">
+                                                <p className="text-[9px] text-neutral-400 leading-tight">
+                                                    Opportunity Gap: Chegar a 10% triplicaria o faturamento sem leads novos.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <StrategicWhy
+                                        title="ROI do Nordeste"
+                                        logic="Embora o Sudeste tenha o volume (R$ 562M impacto), o Nordeste possui o ROI mais insano do Brasil."
+                                        trigger="Cada R$ 1 investido em marketing no Nordeste retorna R$ 4.093 em vendas (ROI 409%)."
+                                        result="Fronteira de eficiência inexplorada com ticket médio de R$ 1.20M."
+                                    />
+
                                 </div>
                             </div>
                         )}
